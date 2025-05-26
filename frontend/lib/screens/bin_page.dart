@@ -6,7 +6,7 @@ import 'package:telegram_drive/models/file_model.dart';
 import 'package:telegram_drive/shared_preferences.dart/userData.dart';
 
 class BinPage extends StatefulWidget {
-  final Function? onFileRestored; // Add this callback parameter
+  final Function? onFileRestored;
 
   const BinPage({
     Key? key,
@@ -21,6 +21,7 @@ class _BinPageState extends State<BinPage> {
   List<FileItem> _deletedFiles = [];
   bool _isLoading = true;
   String? telegramId;
+  static const String baseUrl = 'http://192.168.29.229:3000';
 
   @override
   void initState() {
@@ -49,7 +50,7 @@ class _BinPageState extends State<BinPage> {
 
     try {
       final response = await http.get(
-        Uri.parse('http://192.168.29.229:3000/api/bin?telegramId=$telegramId'),
+        Uri.parse('$baseUrl/api/bin?telegramId=$telegramId'),
       );
 
       if (response.statusCode == 200) {
@@ -77,8 +78,7 @@ class _BinPageState extends State<BinPage> {
       _showSnackBar('Restoring ${file.name}...');
 
       final response = await http.post(
-        Uri.parse(
-            'http://192.168.29.229:3000/api/bin/restore/${file.id}?telegramId=$telegramId'),
+        Uri.parse('$baseUrl/api/bin/restore/${file.id}?telegramId=$telegramId'),
         headers: {'Content-Type': 'application/json'},
       );
 
@@ -88,9 +88,7 @@ class _BinPageState extends State<BinPage> {
           setState(() {
             _deletedFiles.removeWhere((f) => f.id == file.id);
           });
-          _showSnackBar('${file.name} restored successfully');
 
-          // Call the callback function if it exists
           if (widget.onFileRestored != null) {
             widget.onFileRestored!();
           }
@@ -106,39 +104,97 @@ class _BinPageState extends State<BinPage> {
   }
 
   Future<void> _permanentlyDeleteFile(FileItem file) async {
-    // Show confirmation dialog first
     bool confirmDelete = await showDialog<bool>(
           context: context,
           builder: (context) => AlertDialog(
-            title: const Text('Delete Permanently'),
-            content: Text(
-                'Are you sure you want to permanently delete ${file.name}? This action cannot be undone.'),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+            ),
+            title: Row(
+              children: [
+                Icon(Icons.warning_amber_rounded, color: Colors.red),
+                SizedBox(width: 8),
+                Text('Delete Permanently'),
+              ],
+            ),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Are you sure you want to permanently delete:',
+                ),
+                SizedBox(height: 12),
+                Container(
+                  padding: EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: Colors.grey.shade100,
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Row(
+                    children: [
+                      Icon(
+                        _getFileIcon(file.name),
+                        color: _getFileIconColor(file.name),
+                        size: 32,
+                      ),
+                      SizedBox(width: 12),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              file.name,
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            Text(
+                              _formatFileSize(file.size),
+                              style: TextStyle(fontSize: 12),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                SizedBox(height: 16),
+                Text(
+                  'This action cannot be undone.',
+                  style:
+                      TextStyle(color: Colors.red, fontStyle: FontStyle.italic),
+                ),
+              ],
+            ),
             actions: [
               TextButton(
                 onPressed: () => Navigator.pop(context, false),
+                style: TextButton.styleFrom(
+                  foregroundColor: Colors.black54,
+                ),
                 child: const Text('Cancel'),
               ),
-              TextButton(
+              ElevatedButton.icon(
                 onPressed: () => Navigator.pop(context, true),
-                child: const Text('Delete Forever',
-                    style: TextStyle(color: Colors.red)),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.red,
+                  foregroundColor: Colors.white,
+                ),
+                icon: Icon(Icons.delete_forever),
+                label: Text('Delete Forever'),
               ),
             ],
+            actionsPadding: EdgeInsets.fromLTRB(16, 0, 16, 16),
           ),
         ) ??
         false;
 
     if (!confirmDelete) return;
-
     try {
-      _showSnackBar('Permanently deleting ${file.name}...');
-
       final response = await http.delete(
-        Uri.parse(
-            'http://192.168.29.229:3000/api/bin/${file.id}?telegramId=$telegramId'),
+        Uri.parse('$baseUrl/api/bin/${file.id}?telegramId=$telegramId'),
         headers: {'Content-Type': 'application/json'},
       );
-
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
         if (data['success']) {
