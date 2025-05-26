@@ -21,6 +21,8 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  static const String baseUrl = 'http://192.168.29.229:3000';
+
   String? telegramId;
   String? username;
   bool isLoading = true;
@@ -83,7 +85,6 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-  // Load user data first
   Future<void> _loadUserData() async {
     try {
       telegramId = await UserPreferences.getTelegramId();
@@ -93,7 +94,6 @@ class _HomePageState extends State<HomePage> {
 
       if (telegramId == null || telegramId!.isEmpty) {
         print('Warning: User ID is missing. You might need to login again.');
-        // Optional: Show a snackbar or dialog here
       }
     } catch (e) {
       print('Error loading user data: $e');
@@ -106,22 +106,19 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-  // Enhanced file loading with better error handling
   Future<void> _loadUserFiles() async {
     if (telegramId == null || telegramId!.isEmpty) {
       print('Cannot load files: Telegram ID is null or empty');
       return;
     }
-
     try {
       print('Loading files for user: $telegramId');
       setState(() {
-        isLoading = true; // Show loading indicator while fetching files
+        isLoading = true;
       });
 
       final response = await http.get(
-        Uri.parse(
-            'http://192.168.29.229:3000/api/files?telegramId=$telegramId'),
+        Uri.parse('$baseUrl/api/files?telegramId=$telegramId'),
       );
 
       if (response.statusCode == 200) {
@@ -151,7 +148,8 @@ class _HomePageState extends State<HomePage> {
 
   Future<void> _uploadFile() async {
     FilePickerResult? result = await FilePicker.platform.pickFiles(
-      allowMultiple: false,
+      allowMultiple:
+          true, // change this to false is problems( telegram might ban the bot for abuse )
       type: FileType.any,
     );
 
@@ -164,6 +162,7 @@ class _HomePageState extends State<HomePage> {
     if (fileSizeMB > 50) {
       _showSnackBar(
           'File too large (${fileSizeMB.toStringAsFixed(1)} MB). Maximum size: 50MB');
+      // cannot upload files of size greater than 50 mb
       return;
     }
     setState(() {
@@ -175,7 +174,7 @@ class _HomePageState extends State<HomePage> {
         _showSnackBar(
             'Uploading a ${fileSizeMB.toStringAsFixed(1)}MB file. This may take several minutes.');
       }
-      final url = Uri.parse('http://192.168.29.229:3000/api/upload');
+      final url = Uri.parse('$baseUrl/api/upload');
       final request = http.MultipartRequest('POST', url);
 
       final fileStream = file.openRead();
@@ -253,8 +252,7 @@ class _HomePageState extends State<HomePage> {
 
     try {
       final response = await http.get(
-        Uri.parse(
-            'http://192.168.29.229:3000/api/download/${file.id}?telegramId=$telegramId'),
+        Uri.parse('$baseUrl/api/download/${file.id}?telegramId=$telegramId'),
       );
 
       if (response.statusCode == 200) {
@@ -279,7 +277,6 @@ class _HomePageState extends State<HomePage> {
     } else if (status.isDenied) {
       status = await Permission.storage.request();
     } else if (status.isPermanentlyDenied) {
-      // Open app settings
       await openAppSettings();
       return;
     }
@@ -298,8 +295,7 @@ class _HomePageState extends State<HomePage> {
       final File downloadFile = File(filePath);
 
       final response = await http.get(
-        Uri.parse(
-            'http://192.168.29.229:3000/api/file/${file.id}?telegramId=$telegramId'),
+        Uri.parse('$baseUrl/api/file/${file.id}?telegramId=$telegramId'),
         headers: {'Content-Type': 'application/json'},
       );
 
@@ -327,7 +323,6 @@ class _HomePageState extends State<HomePage> {
 
   Future<void> _deleteFile(FileItem file) async {
     try {
-      // Show confirmation dialog first
       bool confirmDelete = await showDialog<bool>(
             context: context,
             builder: (context) => AlertDialog(
@@ -392,11 +387,8 @@ class _HomePageState extends State<HomePage> {
 
       if (!confirmDelete) return;
 
-      _showSnackBar('Deleting ${file.name}...');
-
       final response = await http.delete(
-        Uri.parse(
-            'http://192.168.29.229:3000/api/file/${file.id}?telegramId=$telegramId'),
+        Uri.parse('$baseUrl/api/file/${file.id}?telegramId=$telegramId'),
         headers: {'Content-Type': 'application/json'},
       );
 
@@ -666,8 +658,8 @@ class _HomePageState extends State<HomePage> {
       result = List.from(fileList);
     } else {
       final List<List<String>> categoryExtensions = [
-        [],
-        ['.jpg', '.jpeg', '.png', '.gif', '.bmp', '.webp'],
+        [], // All
+        ['.jpg', '.jpeg', '.png', '.gif', '.bmp', '.webp'], // Images
         [
           '.pdf',
           '.doc',
@@ -689,7 +681,7 @@ class _HomePageState extends State<HomePage> {
           '.m4v'
         ], // Videos
         ['.apk'], // APKs
-        []
+        [] // Others
       ];
 
       if (categoryIndex >= 1 && categoryIndex <= 4) {
@@ -804,7 +796,6 @@ class _HomePageState extends State<HomePage> {
       itemCount: files.length,
       itemBuilder: (context, index) {
         final file = files[index];
-        // Remove preview functionality for non-image files
 
         return Card(
           clipBehavior: Clip.antiAlias,
@@ -1072,8 +1063,7 @@ class _HomePageState extends State<HomePage> {
       }
 
       final response = await http.get(
-        Uri.parse(
-            'http://192.168.29.229:3000/api/thumbnail/${file.id}?telegramId=$telegramId'),
+        Uri.parse('$baseUrl/api/thumbnail/${file.id}?telegramId=$telegramId'),
         headers: {'Content-Type': 'application/json'},
       );
 
@@ -1119,8 +1109,12 @@ class _HomePageState extends State<HomePage> {
       return Icons.table_chart;
     } else if (['.ppt', '.pptx'].contains(ext)) {
       return Icons.slideshow;
-    } else if (['.mp4', '.mkv', '.avi', '.mov', '.wmv', '.flv'].contains(ext)) {
+    } else if (['.mp4', '.mkv', '.avi', '.mov', '.wmv', '.flv', '.webm', '.m4v']
+        .contains(ext)) {
       return Icons.video_file;
+    } else if (['.mp3', '.wav', '.flac', '.ogg', '.m4a', '.aac']
+        .contains(ext)) {
+      return Icons.audio_file;
     } else if (['.apk'].contains(ext)) {
       return Icons.android;
     }
