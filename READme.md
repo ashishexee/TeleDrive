@@ -11,7 +11,7 @@ TeleDrive is a full-stack application that transforms Telegram into your persona
 
 1. **Login Screen** 🔒  
    The login screen using Telegram authentication to securely access your drive.  
-   <img src="screenshots/login_page.jpg" width="300" alt="Login Screen">
+   <img src="screenshots/login_page.jpg" height = "300" width="300" alt="Login Screen">
 
 2. **Home Page - All Files** 🏠  
    Main dashboard showing all files with search and upload functionality.  
