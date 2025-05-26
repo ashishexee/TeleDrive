@@ -7,56 +7,54 @@ A comprehensive cloud storage solution that leverages Telegram's infrastructure 
 TeleDrive is a full-stack application that transforms Telegram into your personal cloud storage system. The project consists of a Flutter frontend and a Node.js backend that acts as an intermediary between the application and Telegram's API. This enables users to securely store and manage their files through a familiar and intuitive interface.
 
 ---
-
 ## 📸 Application Screenshots
 
 1. **Login Screen** 🔒  
    The login screen using Telegram authentication to securely access your drive.  
-   ![Login Screen](screenshots/login_page.jpg)
+   <img src="screenshots/login_page.jpg" width="300" alt="Login Screen">
 
 2. **Home Page - All Files** 🏠  
    Main dashboard showing all files with search and upload functionality.  
-   ![Home Page - Light Mode](screenshots/all_files.jpg)  
-   ![Home Page - Dark Mode](screenshots/allfiles_dark.jpg)
+   <img src="screenshots/all_files.jpg" width="300" alt="Home Page - Light Mode">  
+   <img src="screenshots/allfiles_dark.jpg" width="300" alt="Home Page - Dark Mode">
 
 3. **Photos Gallery** 📸  
    Grid view of all images with thumbnail previews for quick browsing.  
-   ![Photos Gallery](screenshots/only_images.jpg)
+   <img src="screenshots/only_images.jpg" width="300" alt="Photos Gallery">
 
 4. **Documents Section** 📜  
    Organized view of document files with type indicators and quick actions.  
-   ![Documents Section](screenshots/only_documents.jpg)
+   <img src="screenshots/only_documents.jpg" width="300" alt="Documents Section">
 
 5. **Video Gallery** 🎥  
    Built-in video player for previewing video content directly in the app.  
-   ![Video Player](screenshots/videos.jpg)
+   <img src="screenshots/videos.jpg" width="300" alt="Video Player">
 
 6. **File Upload** ⬆️  
    File selection and upload interface with progress tracking.
    
 7. **Downloads Manager** 🔽️  
    List of files downloaded to the device with open and share options.  
-   ![Downloads Manager](screenshots/downloads.jpg)
+   <img src="screenshots/downloads.jpg" width="300" alt="Downloads Manager">
 
 8. **Recycle Bin** 🗑️  
    Deleted files with options to restore or permanently remove.  
-   ![Recycle Bin](screenshots/recycle_bin.jpg)
+   <img src="screenshots/recycle_bin.jpg" width="300" alt="Recycle Bin">
 
 
 ### Additional Screenshots
 
 * **App Navigation Drawer**  
   Easy access to all app sections from any screen.  
-  ![App Drawer](screenshots/appDrawer.jpg)
+  <img src="screenshots/appDrawer.jpg" width="300" alt="App Drawer">
 
 * **Other Files Section**  
   View and manage miscellaneous file types.  
-  ![Others Section](screenshots/others.jpg)
+  <img src="screenshots/others.jpg" width="300" alt="Others Section">
 
 * **Successful Authentication**  
   Confirmation screen after successful login.  
-  ![Successful Login](screenshots/successful_login.jpg) 
-
+  <img src="screenshots/successful_login.jpg" width="300" alt="Successful Login">
 
 ---
 ## 🚀 Features
