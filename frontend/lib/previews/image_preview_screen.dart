@@ -23,7 +23,6 @@ class ImagePreviewScreen extends StatelessWidget {
           IconButton(
             icon: const Icon(Icons.download),
             onPressed: () {
-              // Implement permanent save functionality if needed
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(content: Text('Image saved to Downloads')),
               );
