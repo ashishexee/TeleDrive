@@ -16,6 +16,8 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   bool _isLoading = false;
   bool _showVerification = false;
+  static const String botname = 'teledrive777_bot';
+  static const String baseUrl = 'http://192.168.29.229:3000';
   final TextEditingController _otpController = TextEditingController();
 
   @override
@@ -25,10 +27,8 @@ class _LoginPageState extends State<LoginPage> {
 
   Future<void> _launchTelegramBot() async {
     setState(() => _isLoading = true);
-
-    final httpsUrl = Uri.parse('https://t.me/teledrive77_bot?start=fromapp');
-    final tgUrl =
-        Uri.parse('tg://resolve?domain=teledrive77_bot&start=fromapp');
+    final httpsUrl = Uri.parse('https://t.me/$botname?start=fromapp');
+    final tgUrl = Uri.parse('tg://resolve?domain=$botname&start=fromapp');
 
     try {
       if (await canLaunchUrl(httpsUrl)) {
@@ -52,7 +52,6 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   Future<void> _verifyCode() async {
-    // Get code from single text field
     String code = _otpController.text;
 
     if (code.length != 6) {
@@ -62,7 +61,7 @@ class _LoginPageState extends State<LoginPage> {
 
     setState(() => _isLoading = true);
 
-    final serverUrl = 'http://192.168.29.229:3000/api/verify';
+    final serverUrl = '$baseUrl/api/verify';
 
     try {
       final response = await http.post(
@@ -91,7 +90,6 @@ class _LoginPageState extends State<LoginPage> {
 
   void _showSuccessDialog(
       String message, String telegramId, String username) async {
-    // Save user data first
     await UserPreferences.saveUserData(
       telegramId: telegramId,
       username: username,
@@ -151,27 +149,24 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
-
     return Scaffold(
-      body: SafeArea(
-        child: Container(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              colors: isDarkMode
-                  ? [Colors.black, Color(0xFF121212)]
-                  : [Colors.blue.shade50, Colors.white],
-            ),
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: isDarkMode
+                ? [Colors.black, Color(0xFF121212)]
+                : [Colors.blue.shade50, Colors.white],
           ),
-          child: Center(
-            child: SingleChildScrollView(
-              child: Padding(
-                padding: const EdgeInsets.all(24.0),
-                child: _showVerification
-                    ? _buildVerificationStep()
-                    : _buildInitialStep(),
-              ),
+        ),
+        child: Center(
+          child: SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.all(24.0),
+              child: _showVerification
+                  ? _buildVerificationStep()
+                  : _buildInitialStep(),
             ),
           ),
         ),
@@ -183,7 +178,6 @@ class _LoginPageState extends State<LoginPage> {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
-        // Logo or Icon
         Container(
           width: 120,
           height: 120,
@@ -191,11 +185,8 @@ class _LoginPageState extends State<LoginPage> {
             color: Colors.blue.shade100,
             shape: BoxShape.circle,
           ),
-          child: Icon(
-            Icons.cloud_upload_outlined,
-            size: 60,
-            color: Colors.blue.shade700,
-          ),
+          child: CircleAvatar(
+              radius: 40, child: Image.asset('assets/cloud animations.gif')),
         ),
         const SizedBox(height: 40),
         Text(
@@ -245,13 +236,11 @@ class _LoginPageState extends State<LoginPage> {
   Widget _buildVerificationStep() {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
-      children: <Widget>[
-        // Telegram-style device illustration
+      children: [
         Image.asset(
           'assets/images/verification_image.png',
           width: 120,
           height: 120,
-          // If you don't have this asset, replace with:
           errorBuilder: (context, error, stackTrace) => Icon(
             Icons.phone_android,
             size: 100,
@@ -285,7 +274,6 @@ class _LoginPageState extends State<LoginPage> {
         ),
         const SizedBox(height: 40),
 
-        // Replace the Row of OTP boxes with a simple text field
         Container(
           width: MediaQuery.of(context).size.width * 0.8,
           constraints: BoxConstraints(maxWidth: 360),
