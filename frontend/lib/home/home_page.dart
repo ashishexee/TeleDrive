@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:path/path.dart' as path;
+import 'package:telegram_drive/constants.dart';
 import 'package:telegram_drive/models/file_model.dart';
 import 'package:telegram_drive/shared_preferences.dart/userData.dart';
 import 'dart:convert';
@@ -21,8 +22,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  static const String baseUrl = 'http://192.168.29.229:3000';
-
+  static const String baseUrl = AppConstants.baseUrl;
   String? telegramId;
   String? username;
   bool isLoading = true;

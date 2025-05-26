@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:path/path.dart' as path;
+import 'package:telegram_drive/constants.dart';
 import 'dart:convert';
 import 'package:telegram_drive/models/file_model.dart';
 import 'package:telegram_drive/shared_preferences.dart/userData.dart';
@@ -21,7 +22,7 @@ class _BinPageState extends State<BinPage> {
   List<FileItem> _deletedFiles = [];
   bool _isLoading = true;
   String? telegramId;
-  static const String baseUrl = 'http://192.168.29.229:3000';
+  static const baseUrl = AppConstants.baseUrl;
 
   @override
   void initState() {

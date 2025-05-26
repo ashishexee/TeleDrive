@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:telegram_drive/constants.dart';
 import 'package:telegram_drive/home/home_page.dart';
 import 'package:telegram_drive/shared_preferences.dart/userData.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -16,8 +17,8 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   bool _isLoading = false;
   bool _showVerification = false;
-  static const String botname = 'teledrive777_bot';
-  static const String baseUrl = 'http://192.168.29.229:3000';
+  String botname = AppConstants.botname;
+  String baseUrl = AppConstants.baseUrl;
   final TextEditingController _otpController = TextEditingController();
 
   @override
@@ -60,7 +61,6 @@ class _LoginPageState extends State<LoginPage> {
     }
 
     setState(() => _isLoading = true);
-
     final serverUrl = '$baseUrl/api/verify';
 
     try {
@@ -273,7 +273,6 @@ class _LoginPageState extends State<LoginPage> {
           textAlign: TextAlign.center,
         ),
         const SizedBox(height: 40),
-
         Container(
           width: MediaQuery.of(context).size.width * 0.8,
           constraints: BoxConstraints(maxWidth: 360),
@@ -332,7 +331,6 @@ class _LoginPageState extends State<LoginPage> {
             ),
           ),
         ),
-
         const SizedBox(height: 40),
         _isLoading
             ? const CircularProgressIndicator()

@@ -3,11 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart';
 import 'package:http/http.dart' as http;
+import 'package:telegram_drive/constants.dart';
 import 'package:telegram_drive/models/file_model.dart';
 import 'package:telegram_drive/previews/image_preview_screen.dart';
 
-
-String baseUrl = 'http://192.168.29.229:3000';
+String baseUrl = AppConstants.baseUrl;
 
 class FilePreviewService {
   static bool isPreviewable(String fileName) {
@@ -83,8 +83,7 @@ class FilePreviewService {
 
       if (!await previewFile.exists()) {
         final response = await http.get(
-          Uri.parse(
-              '$baseUrl/api/file/${file.id}?telegramId=$telegramId'),
+          Uri.parse('$baseUrl/api/file/${file.id}?telegramId=$telegramId'),
           headers: {'Content-Type': 'application/json'},
         );
 
