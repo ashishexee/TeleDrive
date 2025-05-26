@@ -171,7 +171,15 @@ app.post('/api/upload', upload.single('file'), async (req, res) => {
         caption: `📁 File uploaded from TeleDrive: ${fileName}`
       });
 
-      const fileId = sentFile.document ? sentFile.document.file_id : null;
+      // Check for both document and audio properties
+      let fileId = null;
+      if (sentFile.document) {
+        fileId = sentFile.document.file_id;
+      } else if (sentFile.audio) {
+        fileId = sentFile.audio.file_id;
+      }
+      
+      console.log('Telegram response:', JSON.stringify(sentFile, null, 2));
       
       if (!fileId) {
         return res.status(500).json({ success: false, message: 'Failed to get file ID from Telegram' });
@@ -182,7 +190,8 @@ app.post('/api/upload', upload.single('file'), async (req, res) => {
         name: fileName,
         size: fileSize,
         uploadDate: new Date().toISOString(),
-        telegramMessageId: sentFile.message_id
+        telegramMessageId: sentFile.message_id,
+        fileType: isAudio ? 'audio' : 'document'
       };
       
       if (!userFiles[telegramId]) {
