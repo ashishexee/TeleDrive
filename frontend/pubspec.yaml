@@ -28,6 +28,7 @@ dependencies:
   photo_view: ^0.15.0
   syncfusion_flutter_pdfviewer: ^29.2.5
   provider: ^6.1.5
+  flutter_launcher_icons: ^0.14.3
 
 dev_dependencies:
   flutter_test:
@@ -38,3 +39,8 @@ flutter:
   assets:
     - assets/
     - assets/cloud animations.gif
+
+flutter_launcher_icons:
+  android: "icon"
+  ios: true
+  image_path: "assets/icons/icon.png"
