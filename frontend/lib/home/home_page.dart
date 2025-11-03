@@ -162,7 +162,6 @@ class _HomePageState extends State<HomePage> {
     if (fileSizeMB > 50) {
       _showSnackBar(
           'File too large (${fileSizeMB.toStringAsFixed(1)} MB). Maximum size: 50MB');
-      // cannot upload files of size greater than 50 mb
       return;
     }
     setState(() {
@@ -170,10 +169,6 @@ class _HomePageState extends State<HomePage> {
       uploadProgress = 0.0;
     });
     try {
-      if (fileSizeMB > 100) {
-        _showSnackBar(
-            'Uploading a ${fileSizeMB.toStringAsFixed(1)}MB file. This may take several minutes.');
-      }
       final url = Uri.parse('$baseUrl/api/upload');
       final request = http.MultipartRequest('POST', url);
 
@@ -201,7 +196,6 @@ class _HomePageState extends State<HomePage> {
         filename: fileName,
       );
       request.files.add(multipartFile);
-
       request.fields['telegramId'] = telegramId ?? '';
       request.fields['filename'] = fileName;
 
@@ -494,7 +488,6 @@ class _HomePageState extends State<HomePage> {
             ? const Center(child: CircularProgressIndicator())
             : Column(
                 children: [
-                  // Upload progress indicator (if uploading)
                   if (isUploading)
                     Padding(
                       padding: const EdgeInsets.all(16.0),
@@ -507,7 +500,6 @@ class _HomePageState extends State<HomePage> {
                       ),
                     ),
 
-                  // Files list with swipe navigation
                   Expanded(
                     child: PageView(
                       controller: _pageController,
@@ -669,7 +661,7 @@ class _HomePageState extends State<HomePage> {
           '.ppt',
           '.pptx',
           '.txt'
-        ], // Documents
+        ], 
         [
           '.mp4',
           '.mkv',
@@ -715,7 +707,7 @@ class _HomePageState extends State<HomePage> {
     return result;
   }
 
-  // Update the empty view method to take a category index parameter
+  
   Widget _buildEmptyView([int? categoryIndex]) {
     final index = categoryIndex ?? _selectedIndex;
     return ListView(
@@ -760,7 +752,6 @@ class _HomePageState extends State<HomePage> {
                         : 'Files will appear here when you upload them',
               ),
               const SizedBox(height: 16),
-              // Only show buttons for search mode or "All" tab
               if (_isSearchActive)
                 ElevatedButton(
                   onPressed: () {
@@ -772,7 +763,7 @@ class _HomePageState extends State<HomePage> {
                   },
                   child: const Text('Clear Search'),
                 )
-              else if (index == 0) // Only show refresh button on "All" tab
+              else if (index == 0) 
                 ElevatedButton(
                   onPressed: () => _refreshFiles(),
                   child: const Text('Refresh'),
@@ -804,12 +795,10 @@ class _HomePageState extends State<HomePage> {
             borderRadius: BorderRadius.circular(12),
           ),
           child: InkWell(
-            // No onTap handler for generic files
             onLongPress: () => _deleteFile(file),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                // File icon (takes up space similar to thumbnail)
                 Expanded(
                   flex: 3,
                   child: Container(
@@ -824,7 +813,6 @@ class _HomePageState extends State<HomePage> {
                   ),
                 ),
 
-                // File info
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Column(
@@ -845,13 +833,11 @@ class _HomePageState extends State<HomePage> {
                   ),
                 ),
 
-                // Action buttons
                 Padding(
                   padding: const EdgeInsets.only(bottom: 8.0),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                      // Download button
                       ElevatedButton.icon(
                         onPressed: () => _downloadFileDirectly(file),
                         icon: const Icon(Icons.download, size: 16),
@@ -863,7 +849,6 @@ class _HomePageState extends State<HomePage> {
                         ),
                       ),
 
-                      // Telegram button
                       OutlinedButton.icon(
                         onPressed: () => _downloadFile(file),
                         icon: const Icon(Icons.telegram, size: 16),
@@ -885,11 +870,8 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  // Add this helper method to get color for file icons based on file type
   Color _getFileIconColor(String fileName) {
     final ext = path.extension(fileName).toLowerCase();
-
-    // Documents
     if (['.pdf'].contains(ext)) {
       return Colors.red;
     } else if (['.doc', '.docx'].contains(ext)) {
@@ -901,31 +883,24 @@ class _HomePageState extends State<HomePage> {
     } else if (['.txt'].contains(ext)) {
       return Colors.grey.shade600;
     }
-    // Videos
     else if (['.mp4', '.mkv', '.avi', '.mov', '.wmv', '.flv'].contains(ext)) {
       return Colors.purple;
     }
-    // APK
     else if (['.apk'].contains(ext)) {
       return Colors.green;
     }
-    // Audio
     else if (['.mp3', '.wav', '.flac', '.ogg', '.m4a'].contains(ext)) {
       return Colors.pinkAccent;
     }
-    // Archives
     else if (['.zip', '.rar', '.7z', '.gz', '.tar'].contains(ext)) {
       return Colors.amber.shade700;
     }
-    // Default
     return Theme.of(context).brightness == Brightness.dark
         ? Colors.white70
         : Colors.blueGrey;
   }
 
-  // Create a new method for the empty state view
 
-  // Add this new method to build the image grid
   Widget _buildImageGrid(List<FileItem> files) {
     return GridView.builder(
       padding: const EdgeInsets.all(8.0),
